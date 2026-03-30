@@ -10,8 +10,8 @@ const materialen = [
 // 2. INSTELLINGEN VOOR DE AFBEELDING
 const config = {
     templateUrl: './template.png', // De ./ zorgt dat hij in de huidige map zoekt
-    font: 'bold 30px Arial',
-    color: '#000000',
+    font: 'bold 40px Arial',
+    color: '#D4AF37',
     startX: 100,      // Pas dit aan om tekst naar links/rechts te verplaatsen
     startY: 250,      // Pas dit aan om tekst naar boven/beneden te verplaatsen
     priceXOffset: 500, // Afstand tussen naam en prijs
