@@ -17,7 +17,7 @@ const base_url = window.location.href.split(/[?#]/)[0].replace('index.html', '')
 const config = {
     templateUrl: base_url + 'template.png', 
     font: 'bold 45px Arial',
-    color: '#D4AF37', // Goud
+    color: '#1F5A53', // Goud
     startX: 150,      
     startY: 350,      
     priceXOffset: 550, 
