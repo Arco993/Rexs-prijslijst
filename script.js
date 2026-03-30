@@ -19,7 +19,7 @@ const config = {
     font: 'bold 45px Arial',
     color: '#1F5A53', // Goud
     startX: 150,      
-    startY: 350,      
+    startY: 750,      
     priceXOffset: 550, 
     rowHeight: 50      
 };
