@@ -20,7 +20,7 @@ const config = {
     color: '#D4AF37', // Goud
     startX: 150,      
     startY: 350,      
-    priceXOffset: 500, 
+    priceXOffset: 550, 
     rowHeight: 50      
 };
 
