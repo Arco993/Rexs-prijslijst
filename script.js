@@ -7,7 +7,7 @@ const materialen = [
 ];
 
 const config = {
-    templateUrl: 'template.png', 
+    templateUrl: './template.png',
     font: 'bold 30px Arial',
     color: '#000000',
     startX: 50,
