@@ -1,81 +1,94 @@
-// 1. LIJST MET MATERIALEN
-const materialen = [
-    "Staal S235 (10mm)",
-    "Aluminium Profiel",
-    "RVS 304 Plaat",
-    "Koper Buis 15mm",
-    "Hout (Eiken)"
+// 1. BIJGEWERKTE LIJST MET MATERIALEN
+const materialenLijst = [
+    "Aluminium",
+    "Car parts",
+    "Craft parts",
+    "Elektronisch Schroot",
+    "Glas",
+    "Ijzer",
+    "Koper",
+    "Metaalschroot",
+    "Plastic",
+    "Rubber",
+    "Staal"
 ];
 
-// 2. INSTELLINGEN VOOR DE AFBEELDING
+// Automatische pad-vinder voor GitHub Pages
+const base_url = window.location.href.split(/[?#]/)[0].replace('index.html', '');
+
 const config = {
-    templateUrl: './template.png', // De ./ zorgt dat hij in de huidige map zoekt
-    font: 'bold 40px Arial',
-    color: '#D4AF37',
-    startX: 100,      // Pas dit aan om tekst naar links/rechts te verplaatsen
-    startY: 250,      // Pas dit aan om tekst naar boven/beneden te verplaatsen
-    priceXOffset: 500, // Afstand tussen naam en prijs
-    rowHeight: 60      // Ruimte tussen de regels
+    templateUrl: base_url + 'template.png', 
+    font: 'bold 30px Arial',
+    color: '#D4AF37', // Chique goudkleur
+    startX: 100,      // Pas dit aan om tekst naar links/rechts te schuiven op je PNG
+    startY: 250,      // Pas dit aan om tekst naar boven/beneden te schuiven op je PNG
+    priceXOffset: 500, // Afstand tussen materiaalnaam en de prijs
+    rowHeight: 50      // Ruimte tussen de regels (iets kleiner omdat de lijst langer is)
 };
 
-// 3. KOPPELING MET DE PAGINA
 const tabelBody = document.querySelector('#prijzenTabel tbody');
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 
-// Vul de tabel op de website bij het laden
-materialen.forEach((materiaal, index) => {
+// Vul de tabel op de website (alfabetisch bij opstarten)
+materialenLijst.sort().forEach((materiaal, index) => {
     const row = `<tr>
         <td>${materiaal}</td>
-        <td><input type="number" class="prijs-input" data-index="${index}" step="0.01" value="0.00"></td>
+        <td><input type="number" class="prijs-input" data-naam="${materiaal}" step="0.01" value="0.00"></td>
     </tr>`;
     tabelBody.innerHTML += row;
 });
 
-// 4. DE GENERATOR FUNCTIE
 document.getElementById('generateBtn').addEventListener('click', function() {
-    console.log("Systeem: Starten met genereren...");
+    console.log("Systeem: Data verzamelen...");
     
+    // 1. Verzamel alle ingevulde data
+    const inputs = document.querySelectorAll('.prijs-input');
+    let dataVoorAfbeelding = [];
+
+    inputs.forEach(input => {
+        dataVoorAfbeelding.push({
+            naam: input.getAttribute('data-naam'),
+            prijs: parseFloat(input.value) || 0
+        });
+    });
+
+    // 2. SORTEREN: Eerst op prijs (hoog naar laag), dan alfabetisch bij gelijke prijs
+    dataVoorAfbeelding.sort((a, b) => {
+        if (b.prijs !== a.prijs) {
+            return b.prijs - a.prijs; 
+        }
+        return a.naam.localeCompare(b.naam);
+    });
+
+    // 3. Tekenproces op de afbeelding
     const image = new Image();
-    
-    // Belangrijk voor GitHub Pages beveiliging:
     image.crossOrigin = "anonymous"; 
-    
-    // Voeg een uniek nummer toe aan de URL om de browser-cache te omzeilen
     image.src = config.templateUrl + '?t=' + new Date().getTime();
 
     image.onload = function() {
-        console.log("Systeem: Template succesvol geladen.");
-        
-        // Canvas klaarmaken
         canvas.width = image.width;
         canvas.height = image.height;
         ctx.drawImage(image, 0, 0);
 
-        // Tekststijl instellen
         ctx.font = config.font;
         ctx.fillStyle = config.color;
         ctx.textBaseline = 'top';
 
-        // Prijzen ophalen en op de afbeelding tekenen
-        const inputs = document.querySelectorAll('.prijs-input');
-        inputs.forEach((input, index) => {
-            const prijs = parseFloat(input.value).toFixed(2).replace('.', ',');
+        // 4. Teken de gesorteerde lijst
+        dataVoorAfbeelding.forEach((item, index) => {
+            const prijsGeformatteerd = item.prijs.toFixed(2).replace('.', ',');
             const yPos = config.startY + (index * config.rowHeight);
             
-            // Teken de naam van het materiaal
-            ctx.fillText(materialen[index], config.startX, yPos);
-            
-            // Teken de prijs
-            ctx.fillText("€ " + prijs, config.startX + config.priceXOffset, yPos);
+            ctx.fillText(item.naam, config.startX, yPos);
+            ctx.fillText("€ " + prijsGeformatteerd, config.startX + config.priceXOffset, yPos);
         });
 
-        // Huidige datum toevoegen (optioneel)
+        // Datum toevoegen
         const datum = new Date().toLocaleDateString('nl-NL');
-        ctx.fillText("Datum: " + datum, config.startX, config.startY - 80);
+        ctx.fillText("Datum: " + datum, config.startX, config.startY - 70);
 
-        // De afbeelding downloaden
-        console.log("Systeem: Afbeelding klaar voor download.");
+        // Downloaden
         const link = document.createElement('a');
         link.download = 'Prijslijst_' + datum + '.png';
         link.href = canvas.toDataURL('image/png');
@@ -83,7 +96,6 @@ document.getElementById('generateBtn').addEventListener('click', function() {
     };
 
     image.onerror = function() {
-        console.error("FOUT: Kan 'template.png' niet vinden. Controleer of het bestand exact zo heet in GitHub!");
-        alert("Fout: De achtergrondafbeelding (template.png) kon niet worden geladen.");
+        alert("Fout: Kan 'template.png' niet vinden. Zorg dat de afbeelding in GitHub staat!");
     };
 });
